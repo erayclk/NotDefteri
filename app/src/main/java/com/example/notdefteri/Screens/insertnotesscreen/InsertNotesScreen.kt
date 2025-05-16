@@ -39,6 +39,7 @@ import androidx.compose.ui.unit.sp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.notdefteri.R
+import com.example.notdefteri.models.Notes
 import com.example.notdefteri.viewmodel.NotesScreenViewModel
 
 @Composable
@@ -50,6 +51,15 @@ fun InsertNotesScreen(navController: NavController, id: String?) {
     val title = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
     val war = stringResource(R.string.warring).toString()
+
+    LaunchedEffect(id) {
+        if (id != null && id != "defaultId") {
+            viewModel.getNoteById(id)?.let { note ->
+                title.value = note.title
+                description.value = note.description
+            }
+        }
+    }
 
     LaunchedEffect(errorMessage) {
         errorMessage?.let {
@@ -68,7 +78,18 @@ fun InsertNotesScreen(navController: NavController, id: String?) {
                     if (title.value.isEmpty() && description.value.isEmpty()) {
                         Toast.makeText(context, war, Toast.LENGTH_SHORT).show()
                     } else {
-                        viewModel.addNote(title.value, description.value)
+                        if (id != null && id != "defaultId") {
+                            val updatedNote = Notes(
+                                id = id,
+                                title = title.value,
+                                description = description.value
+                            )
+                            viewModel.updateNote(updatedNote)
+                            Toast.makeText(context, "Not güncellendi", Toast.LENGTH_SHORT).show()
+                        } else {
+                            viewModel.addNote(title.value, description.value)
+                            Toast.makeText(context, "Not eklendi", Toast.LENGTH_SHORT).show()
+                        }
                         navController.popBackStack()
                     }
                 }

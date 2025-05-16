@@ -30,9 +30,15 @@ class NotesScreenViewModel : ViewModel() {
     fun updateNote(note: Notes) {
         viewModelScope.launch {
             try {
-                repository.updateNote(note)
+                if (note.id.isNotEmpty()) {
+                    repository.updateNote(note)
+                    Log.d("NotesScreenViewModel", "Note updated successfully: ${note.id}")
+                } else {
+                    _errorMessage.value = "Invalid note ID for update"
+                }
             } catch (e: Exception) {
                 _errorMessage.value = "Error updating note: ${e.message}"
+                Log.e("NotesScreenViewModel", "Error updating note: ${e.message}")
             }
         }
     }
@@ -51,5 +57,9 @@ class NotesScreenViewModel : ViewModel() {
 
     fun clearErrorMessage() {
         _errorMessage.value = null
+    }
+
+    fun getNoteById(noteId: String): Notes? {
+        return notes.value.find { it.id == noteId }
     }
 }

@@ -67,7 +67,23 @@ class NoteRepository {
 
     // Not güncelleme
     suspend fun updateNote(note: Notes) {
-        notesDBRef.document(note.id).set(note).await()
+        try {
+            Log.d("NoteRepository", "Attempting to update note with ID: ${note.id}")
+            val documentRef = notesDBRef.document(note.id)
+            
+            documentRef.get().await().let { document ->
+                if (document.exists()) {
+                    documentRef.set(note).await()
+                    Log.d("NoteRepository", "Note successfully updated with ID: ${note.id}")
+                } else {
+                    Log.e("NoteRepository", "Note with ID ${note.id} does not exist")
+                    throw Exception("Note with ID ${note.id} does not exist")
+                }
+            }
+        } catch (e: Exception) {
+            Log.e("NoteRepository", "Error updating note: ${e.message}")
+            throw e
+        }
     }
 
     // Not silme
