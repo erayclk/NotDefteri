@@ -1,3 +1,8 @@
 <resources>
     <string name="app_name">NotDefteri</string>
+    <string name="notes_screen_title">Create Notes</string>
+    <string name="insert_data">Insert Data</string>
+    <string name="enter_title">Enter your title</string>
+    <string name="enter_discription">Enter discription</string>
+    <string name="warring">Cannot be left emptyn</string>
 </resources>
