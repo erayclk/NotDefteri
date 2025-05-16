@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">NotDefteri</string>
+    <string name="notes_screen_title">Not oluştur</string>
+    <string name="insert_data">Veri ekle</string>
+    <string name="enter_title">Başlığı yazın</string>
+    <string name="enter_discription">Açıklamayı yazınız</string>
+    <string name="warring">Boş bırakılamaz</string>
+</resources>
