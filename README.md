@@ -31,7 +31,7 @@ Modern ve kullanıcı dostu bir not alma uygulaması. Firebase Firestore kullana
 *Notların listelendiği ana ekran*
 
 ### Not Ekleme
-![Not Ekleme](screenshots/add_note.png)
+![Not Ekleme](Cscreenshots\add_note.png)
 *Yeni not ekleme ekranı*
 
 ### Not Güncelleme
@@ -83,8 +83,3 @@ app/
 
 Bu proje MIT lisansı altında lisanslanmıştır. Detaylar için [LICENSE](LICENSE) dosyasına bakın.
 
-## İletişim
-
-Proje Sahibi - [@yourusername](https://github.com/yourusername)
-
-Proje Linki: [https://github.com/yourusername/notdefteri](https://github.com/yourusername/notdefteri) 
