@@ -27,15 +27,15 @@ Modern ve kullanıcı dostu bir not alma uygulaması. Firebase Firestore kullana
 ## Ekran Görüntüleri
 
 ### Ana Ekran
-![Ana Ekran](screenshots/main_screen.png)
+<img src="screenshots/main_screen.png" width="300" alt="Ana Ekran">
 *Notların listelendiği ana ekran*
 
 ### Not Ekleme
-![Not Ekleme](Cscreenshots\add_note.png)
+<img src="screenshots/add_note.png" width="300" alt="Not Ekleme">
 *Yeni not ekleme ekranı*
 
 ### Not Güncelleme
-![Not Güncelleme](screenshots/update_note.png)
+<img src="screenshots/update_note.png" width="300" alt="Not Güncelleme">
 *Not güncelleme ekranı*
 
 ## Kullanım
