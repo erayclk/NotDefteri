@@ -17,6 +17,8 @@ import androidx.compose.material3.Scaffold
 import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateListOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -27,32 +29,26 @@ import androidx.compose.ui.text.font.FontStyle
 import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.notdefteri.R
 import com.example.notdefteri.models.Notes
 import com.example.notdefteri.models.NotesNavigationItem
+import com.example.notdefteri.viewmodel.NotesScreenViewModel
 import com.google.firebase.firestore.FirebaseFirestore
 
 @Composable
 fun NotesScreen(navController: NavController) {
 
-    val db = FirebaseFirestore.getInstance()
-    val notesDBRef=db.collection("notes")
+    val viewModel: NotesScreenViewModel = viewModel()
+    val notes by viewModel.notes.collectAsState()
+
     val noteslist = remember { mutableStateListOf<Notes>() }
 
-    LaunchedEffect(Unit) {
-        notesDBRef.addSnapshotListener{
-            value,error->
-            if (error ==null){
-                val data = value?.toObjects(Notes::class.java)
-                noteslist.clear()
-                if (data != null) {
-                    noteslist.addAll(data)
-                }
-            }
+    LaunchedEffect(notes) {
 
-        }
-
+        noteslist.clear()
+        noteslist.addAll(notes)
 
     }
 
@@ -64,7 +60,7 @@ fun NotesScreen(navController: NavController) {
                 containerColor = Color.Red,
                 shape = CircleShape,
                 onClick = { navController.navigate(
-                    NotesNavigationItem.Add.route+"/{id}") }) {
+                    NotesNavigationItem.Add.route+"/defaultId") }) {
                 Icon(Icons.Filled.Add, contentDescription = "Add")
             }
         }
@@ -90,7 +86,7 @@ fun NotesScreen(navController: NavController) {
                 LazyColumn(modifier = Modifier.padding(16.dp)) {
 
                     items(noteslist) { notes ->
-                        ListItems(notes ,notesDBRef,navController)
+                        ListItems(notes ,navController)
                         Spacer(Modifier.padding(8.dp))
 
 

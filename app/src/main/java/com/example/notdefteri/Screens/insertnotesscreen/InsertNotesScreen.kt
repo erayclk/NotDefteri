@@ -13,7 +13,6 @@ import androidx.compose.foundation.layout.padding
 import androidx.compose.foundation.shape.CircleShape
 import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.material.icons.Icons
-
 import androidx.compose.material.icons.filled.Done
 import androidx.compose.material3.FloatingActionButton
 import androidx.compose.material3.Icon
@@ -23,6 +22,8 @@ import androidx.compose.material3.TextField
 import androidx.compose.material3.TextFieldDefaults
 import androidx.compose.runtime.Composable
 import androidx.compose.runtime.LaunchedEffect
+import androidx.compose.runtime.collectAsState
+import androidx.compose.runtime.getValue
 import androidx.compose.runtime.mutableStateOf
 import androidx.compose.runtime.remember
 import androidx.compose.ui.Modifier
@@ -35,32 +36,25 @@ import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.text.style.TextAlign
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.unit.sp
-import androidx.compose.ui.platform.LocalContext
+import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavController
 import com.example.notdefteri.R
-import com.example.notdefteri.models.Notes
-import com.google.firebase.firestore.FirebaseFirestore
-
+import com.example.notdefteri.viewmodel.NotesScreenViewModel
 
 @Composable
 fun InsertNotesScreen(navController: NavController, id: String?) {
-
+    val viewModel: NotesScreenViewModel = viewModel()
+    val errorMessage by viewModel.errorMessage.collectAsState()
     val context = LocalContext.current
-    val db = FirebaseFirestore.getInstance()
-    val notesDBRef = db.collection("notes")
 
     val title = remember { mutableStateOf("") }
     val description = remember { mutableStateOf("") }
-
     val war = stringResource(R.string.warring).toString()
 
-    LaunchedEffect(Unit) {
-        if (id != "defaultId") {
-            notesDBRef.document(id.toString()).get().addOnSuccessListener {
-                val singleData = it.toObject(Notes::class.java)
-                title.value = singleData?.title ?: ""
-                description.value = singleData?.description ?: ""
-            }
+    LaunchedEffect(errorMessage) {
+        errorMessage?.let {
+            Toast.makeText(context, it, Toast.LENGTH_SHORT).show()
+            viewModel.clearErrorMessage()
         }
     }
 
@@ -71,29 +65,11 @@ fun InsertNotesScreen(navController: NavController, id: String?) {
                 containerColor = Color.Red,
                 shape = CircleShape,
                 onClick = {
-
                     if (title.value.isEmpty() && description.value.isEmpty()) {
                         Toast.makeText(context, war, Toast.LENGTH_SHORT).show()
                     } else {
-                        val myNotesId = if (id != "defaultId") {
-                            id.toString()
-                        } else {
-                            notesDBRef.document().id
-                        }
-
-                        val notes = Notes(
-                            id = myNotesId,
-                            title = title.value,
-                            description = description.value
-                        )
-                        notesDBRef.document(myNotesId).set(notes).addOnCompleteListener {
-                            if (it.isSuccessful) {
-                                Toast.makeText(context, "Başarılı", Toast.LENGTH_SHORT).show()
-                                navController.popBackStack()
-                            } else {
-                                Toast.makeText(context, "Başarısız", Toast.LENGTH_SHORT).show()
-                            }
-                        }
+                        viewModel.addNote(title.value, description.value)
+                        navController.popBackStack()
                     }
                 }
             ) {
@@ -106,8 +82,7 @@ fun InsertNotesScreen(navController: NavController, id: String?) {
                 .fillMaxSize()
                 .padding(innerPadding)
                 .background(Color.Black)
-        )
-        {
+        ) {
             Column(modifier = Modifier.padding(16.dp)) {
                 Text(
                     text = stringResource(R.string.insert_data),
@@ -136,13 +111,11 @@ fun InsertNotesScreen(navController: NavController, id: String?) {
                         )
                     },
                     value = title.value,
-                    onValueChange = { title.value = it},
+                    onValueChange = { title.value = it },
                     textStyle = TextStyle(textAlign = TextAlign.Start, color = Color.Black),
                     maxLines = 1
-
-                    )
+                )
                 Spacer(modifier = Modifier.height(16.dp))
-
                 TextField(
                     colors = TextFieldDefaults.colors(
                         focusedIndicatorColor = Color.DarkGray,
@@ -163,18 +136,10 @@ fun InsertNotesScreen(navController: NavController, id: String?) {
                         )
                     },
                     value = description.value,
-                    onValueChange = { description.value = it},
-                    textStyle = TextStyle(textAlign = TextAlign.Start, color = Color.Black),
-
-                    )
-
-
-
-
+                    onValueChange = { description.value = it },
+                    textStyle = TextStyle(textAlign = TextAlign.Start, color = Color.Black)
+                )
             }
-
-
         }
     }
-
 }
