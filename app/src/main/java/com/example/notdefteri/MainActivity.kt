@@ -4,20 +4,15 @@ import android.os.Bundle
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.enableEdgeToEdge
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.foundation.layout.padding
-import androidx.compose.material3.Scaffold
-import androidx.compose.material3.Text
 import androidx.compose.runtime.Composable
-import androidx.compose.ui.Modifier
-import androidx.compose.ui.tooling.preview.Preview
 import androidx.core.splashscreen.SplashScreen.Companion.installSplashScreen
-import com.example.notdefteri.Screens.SplashScreen
-import com.example.notdefteri.ui.theme.NotDefteriTheme
-import kotlinx.coroutines.CoroutineScope
-import kotlinx.coroutines.Dispatchers
-import kotlinx.coroutines.delay
-import kotlinx.coroutines.launch
+import androidx.navigation.NavHostController
+import androidx.navigation.compose.NavHost
+import androidx.navigation.compose.composable
+import androidx.navigation.compose.rememberNavController
+import com.example.notdefteri.Screens.insertnotesscreen.InsertNotesScreen
+import com.example.notdefteri.Screens.notescreen.NotesScreen
+import com.example.notdefteri.models.NotesNavigationItem
 
 class MainActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -27,23 +22,32 @@ class MainActivity : ComponentActivity() {
 
 
         setContent {
+            val rememberNavController = rememberNavController()
+            NotesNavigation(rememberNavController)
+        }
+
+
+    }
+}
+
+@Composable
+fun NotesNavigation(navHostController: NavHostController) {
+
+
+    NavHost(navController = navHostController, startDestination = NotesNavigationItem.Home.route) {
+        composable(NotesNavigationItem.Home.route){
+            NotesScreen(navHostController)
+        }
+        composable(NotesNavigationItem.Add.route+"/{id}"){
+            val id = it.arguments?.getString("id")
+            InsertNotesScreen(navHostController, id)
+
 
         }
+        composable("update_notes_screen/{id}") {
+            val id = it.arguments?.getString("id")
+            InsertNotesScreen(navHostController, id)
+        }
     }
-}
 
-@Composable
-fun Greeting(name: String, modifier: Modifier = Modifier) {
-    Text(
-        text = "Hello $name!",
-        modifier = modifier
-    )
-}
-
-@Preview(showBackground = true)
-@Composable
-fun GreetingPreview() {
-    NotDefteriTheme {
-        Greeting("Android")
-    }
 }
